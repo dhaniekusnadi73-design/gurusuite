@@ -1,0 +1,16 @@
+{
+  "name": "gurusuite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generator perangkat ajar guru dengan pembayaran manual dan kode aktivasi.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check": "node --check app.js && node --check admin.js && node --check server.js && node --check tests/smoke-test.js",
+    "test": "node tests/smoke-test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

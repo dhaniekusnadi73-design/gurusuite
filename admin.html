@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Pembayaran - GuruSuite</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Panel admin pembayaran</p>
+        <h1>GuruSuite Admin</h1>
+      </div>
+      <div class="header-actions">
+        <a class="wa-button" href="/" rel="noreferrer">Buka Generator</a>
+      </div>
+    </header>
+
+    <main class="admin-shell">
+      <section class="panel admin-login-panel">
+        <div class="panel-title">
+          <h2>Akses Admin</h2>
+          <span class="plan-badge" id="adminStatus">Terkunci</span>
+        </div>
+        <div class="compact-form">
+          <label>
+            PIN Admin
+            <input id="adminPinInput" type="password" placeholder="Masukkan PIN admin">
+          </label>
+          <div class="form-actions">
+            <button id="refreshOrdersBtn" type="button">Refresh Order</button>
+            <button class="ghost" id="exportOrdersBtn" type="button">Export JSON</button>
+          </div>
+          <label>
+            Restore Backup JSON
+            <input id="restoreOrdersInput" type="file" accept="application/json">
+          </label>
+        </div>
+      </section>
+
+      <section class="panel admin-main-panel">
+        <div class="panel-title">
+          <div>
+            <h2>Order Pembayaran</h2>
+            <p id="adminSummary">Masukkan PIN lalu refresh order.</p>
+          </div>
+        </div>
+        <div id="adminOrders" class="admin-orders large"></div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <a href="/">Generator</a>
+      <a href="/privacy.html">Kebijakan Privasi</a>
+      <a href="/terms.html">Syarat Layanan</a>
+    </footer>
+
+    <script src="admin.js"></script>
+  </body>
+</html>

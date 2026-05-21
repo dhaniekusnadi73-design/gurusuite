@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GuruSuite - Generator Perangkat Ajar</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Generator perangkat ajar Indonesia</p>
+        <h1>GuruSuite</h1>
+      </div>
+      <div class="header-actions">
+        <span class="account-pill" id="accountPill">Gratis: 0/3 generate</span>
+        <button class="ghost" id="sampleBtn" type="button">Contoh</button>
+        <button id="printBtn" type="button">Cetak</button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="panel controls-panel" aria-label="Panel generator">
+        <div class="panel-title">
+          <h2>Parameter Ajar</h2>
+          <span id="coverageBadge">MVP v1</span>
+        </div>
+
+        <form id="generatorForm">
+          <div class="grid two">
+            <label>
+              Jenjang
+              <select id="level" name="level"></select>
+            </label>
+            <label>
+              Kelas
+              <select id="grade" name="grade"></select>
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label>
+              Nama Sekolah
+              <input id="schoolName" name="schoolName" type="text" placeholder="Contoh: SD Negeri Harapan">
+            </label>
+            <label>
+              Tahun Ajaran
+              <input id="schoolYear" name="schoolYear" type="text" placeholder="Contoh: 2026/2027">
+            </label>
+          </div>
+
+          <div class="grid two">
+            <label>
+              Kurikulum
+              <select id="curriculum" name="curriculum"></select>
+            </label>
+            <label>
+              Semester
+              <select id="semester" name="semester">
+                <option value="Ganjil">Ganjil</option>
+                <option value="Genap">Genap</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Mata Pelajaran
+            <select id="subject" name="subject"></select>
+          </label>
+
+          <div class="grid two">
+            <label>
+              Fase / Kompetensi
+              <input id="phase" name="phase" type="text" readonly>
+            </label>
+            <label>
+              Paket Generate
+              <select id="packageMode" name="packageMode">
+                <option value="complete">Lengkap</option>
+                <option value="teaching">Fokus Mengajar</option>
+                <option value="admin">Administrasi</option>
+                <option value="assessment">Asesmen</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Topik / Bab
+            <input id="topic" name="topic" type="text" placeholder="Contoh: Pecahan, Teks Prosedur, Ekosistem">
+          </label>
+
+          <div class="grid two">
+            <label>
+              Alokasi Waktu
+              <input id="duration" name="duration" type="text" placeholder="Contoh: 3 pertemuan x 2 JP">
+            </label>
+            <label>
+              Nama Guru
+              <input id="teacher" name="teacher" type="text" placeholder="Nama guru">
+            </label>
+          </div>
+
+          <label>
+            CP/KD/TP Khusus
+            <textarea id="competencyText" name="competencyText" rows="4" placeholder="Opsional. Tempel CP, KD, TP, atau indikator resmi dari sekolah/dokumen kurikulum."></textarea>
+          </label>
+
+          <label>
+            Karakteristik Siswa
+            <textarea id="studentProfile" name="studentProfile" rows="4" placeholder="Contoh: kemampuan awal beragam, aktif berdiskusi, butuh contoh konkret"></textarea>
+          </label>
+
+          <label>
+            Konteks Lokal / Diferensiasi
+            <textarea id="localContext" name="localContext" rows="3" placeholder="Contoh: kaitkan dengan lingkungan sekitar sekolah, budaya daerah, usaha keluarga, atau kebutuhan inklusif siswa"></textarea>
+          </label>
+
+          <fieldset>
+            <legend>Dokumen yang digenerate</legend>
+            <div class="check-grid" id="docOptions"></div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button class="primary" type="submit">Generate Perangkat</button>
+            <button class="ghost" id="resetBtn" type="button">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="workspace">
+        <div class="toolbar panel">
+          <div>
+            <h2>Preview Dokumen</h2>
+            <p id="docMeta">Belum ada dokumen. Isi parameter lalu generate.</p>
+          </div>
+          <div class="toolbar-actions">
+            <button id="copyBtn" class="ghost" type="button">Salin</button>
+            <button id="downloadDocBtn" type="button">Export .doc</button>
+          </div>
+        </div>
+
+        <article class="document-preview" id="preview">
+          <div class="empty-state">
+            <div class="visual-mark" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <h2>Mesin perangkat ajar siap dipakai.</h2>
+            <p>Pilih jenjang, kelas, mapel, kurikulum, semester, lalu hasilkan modul ajar, silabus, ATP, LKPD, asesmen, rubrik, dan administrasi pendukung dalam satu paket.</p>
+          </div>
+        </article>
+      </section>
+
+      <aside class="panel side-panel">
+        <div class="panel-title">
+          <h2>Akun</h2>
+          <span class="plan-badge" id="planBadge">Gratis</span>
+        </div>
+        <form id="accountForm" class="compact-form">
+          <label>
+            Nama Pengguna
+            <input id="accountName" type="text" placeholder="Nama guru / sekolah">
+          </label>
+          <label>
+            Email Pengguna
+            <input id="accountContact" type="email" placeholder="nama@email.com">
+          </label>
+          <button type="submit">Simpan Akun</button>
+        </form>
+
+        <div class="pricing-box">
+          <h3>Paket Berbayar</h3>
+          <div class="plan-card">
+            <strong>Pro Guru</strong>
+            <span>Rp79.000/bulan</span>
+            <button class="small" data-plan="Pro Guru" data-price="79000" type="button">Buat Invoice</button>
+          </div>
+          <div class="plan-card">
+            <strong>Sekolah</strong>
+            <span>Rp299.000/bulan</span>
+            <button class="small" data-plan="Sekolah" data-price="299000" type="button">Buat Invoice</button>
+          </div>
+        </div>
+
+        <div class="payment-box">
+          <h3>Akun Pembayaran</h3>
+          <p id="paymentInstruction">Pilih paket untuk melihat instruksi pembayaran.</p>
+          <div class="payment-detail">
+            <span>Bank</span>
+            <strong id="bankAccount">Memuat rekening...</strong>
+          </div>
+          <div class="payment-detail">
+            <span>QRIS</span>
+            <strong id="qrisAccount">Memuat QRIS...</strong>
+          </div>
+          <div class="payment-detail">
+            <span>Konfirmasi</span>
+            <strong id="adminContact">Memuat email admin...</strong>
+          </div>
+          <a class="wa-button" id="confirmPaymentLink" href="#" rel="noreferrer">Konfirmasi via Email</a>
+          <div class="grid one">
+            <label>
+              Kode Aktivasi
+              <input id="activationCodeInput" type="text" placeholder="Masukkan kode dari admin">
+            </label>
+            <button class="ghost" id="activateCodeBtn" type="button">Aktifkan Paket</button>
+          </div>
+        </div>
+
+        <div class="service-box">
+          <h3>Layanan Otomatis</h3>
+          <p>Setelah order ditandai lunas, pengguna mendapat kode aktivasi untuk membuka paket Pro/Sekolah dan kuota gratis tidak lagi membatasi generate.</p>
+        </div>
+
+        <div class="panel-title">
+          <h2>Riwayat</h2>
+          <button class="ghost small" id="clearHistoryBtn" type="button">Bersihkan</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+
+        <div class="monetize-box">
+          <h3>Model Jualan</h3>
+          <p>Gratis 3 generate/bulan, Pro Guru Rp79.000/bulan, paket sekolah mulai Rp299.000/bulan.</p>
+        </div>
+
+        <div class="source-box">
+          <h3>Rujukan Istilah</h3>
+          <p>Kurikulum Merdeka memakai CP per fase. K13 memakai KI/KD. Draf tetap perlu validasi guru dengan dokumen resmi sekolah.</p>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="app-footer">
+      <a href="/privacy.html">Kebijakan Privasi</a>
+      <a href="/terms.html">Syarat Layanan</a>
+      <a href="/admin.html">Admin</a>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
