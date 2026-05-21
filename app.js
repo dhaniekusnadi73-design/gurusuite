@@ -119,7 +119,7 @@ let appConfig = {
     accountNumber: "7567057270",
     accountName: "Dhanie Kusnadi",
     qrisLabel: "Siapkan QRIS merchant kamu di sini",
-    adminEmail: "admin@gurusuite.local"
+    adminEmail: "dhaniekusnadi73@guru.sd.belajar.id"
   },
   plans: [
     { name: "Pro Guru", price: 79000 },
@@ -167,7 +167,7 @@ async function loadConfig() {
   } catch {
     el.bankAccount.textContent = "BSI 7567057270 a.n. Dhanie Kusnadi";
     el.qrisAccount.textContent = "Siapkan QRIS merchant kamu di sini";
-    el.adminContact.textContent = "admin@gurusuite.local";
+    el.adminContact.textContent = "dhaniekusnadi73@guru.sd.belajar.id";
   }
 }
 

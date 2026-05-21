@@ -21,7 +21,7 @@ services:
       - key: PAYMENT_ACCOUNT_NAME
         value: Dhanie Kusnadi
       - key: ADMIN_EMAIL
-        value: admin@gurusuite.local
+        value: dhaniekusnadi73@guru.sd.belajar.id
     disk:
       name: gurusuite-data
       mountPath: /var/data

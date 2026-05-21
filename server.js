@@ -18,7 +18,7 @@ const paymentConfig = {
   accountNumber: process.env.PAYMENT_ACCOUNT_NUMBER || "7567057270",
   accountName: process.env.PAYMENT_ACCOUNT_NAME || "Dhanie Kusnadi",
   qrisLabel: process.env.PAYMENT_QRIS_LABEL || "Siapkan QRIS merchant kamu di sini",
-  adminEmail: process.env.ADMIN_EMAIL || "admin@gurusuite.local"
+  adminEmail: process.env.ADMIN_EMAIL || "dhaniekusnadi73@guru.sd.belajar.id"
 };
 const plans = [
   { name: "Pro Guru", price: Number(process.env.PRICE_PRO_GURU || 79000) },

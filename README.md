@@ -52,6 +52,8 @@ Ini MVP awal. Untuk dijual secara serius, langkah berikutnya adalah menambah dat
 
 Bagian pembayaran saat ini memakai mode transfer manual yang bisa diotomasi dari panel admin. Rekening manual yang dipakai: BSI 7567057270 a.n. Dhanie Kusnadi, konfirmasi via email admin. QRIS bisa ditambahkan nanti setelah merchant siap.
 
+Email admin default: `dhaniekusnadi73@guru.sd.belajar.id`.
+
 Panduan deploy ada di `DEPLOYMENT.md`. Untuk publik, wajib set `ADMIN_PIN` ke PIN yang kuat.
 
 Sebelum share link ke pengguna, ikuti `PRODUCTION-CHECKLIST.md`.

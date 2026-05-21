@@ -19,7 +19,7 @@ GuruSuite sekarang bisa dijalankan sebagai aplikasi Node.js tanpa dependency eks
    - `PAYMENT_BANK=BSI`
    - `PAYMENT_ACCOUNT_NUMBER=7567057270`
    - `PAYMENT_ACCOUNT_NAME=Dhanie Kusnadi`
-   - `ADMIN_EMAIL=email-admin-kamu@domain.com`
+   - `ADMIN_EMAIL=dhaniekusnadi73@guru.sd.belajar.id`
    - `PRICE_PRO_GURU=79000`
    - `PRICE_SEKOLAH=299000`
 6. Tambahkan persistent disk:
