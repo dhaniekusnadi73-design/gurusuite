@@ -59,3 +59,5 @@ Panduan deploy ada di `DEPLOYMENT.md`. Untuk publik, wajib set `ADMIN_PIN` ke PI
 Sebelum share link ke pengguna, ikuti `PRODUCTION-CHECKLIST.md`.
 
 Panduan operasional harian ada di `OPERATIONS.md`, dan ringkasan status siap deploy ada di `DEPLOY-READY.md`.
+
+Panduan upload ke GitHub ada di `GITHUB-UPLOAD.md`.
