@@ -60,15 +60,83 @@ async function ensureDataStore() {
 }
 
 async function readOrders() {
+  if (supabaseEnabled()) {
+    const rows = await supabaseRequest("gurusuite_orders?select=data&order=created_at.desc");
+    return rows.map((row) => normalizeOrder(row.data));
+  }
   await ensureDataStore();
   const raw = await fsp.readFile(ordersFile, "utf8");
   return JSON.parse(raw || "[]");
 }
 
 async function writeOrders(orders) {
+  if (supabaseEnabled()) {
+    await supabaseRequest("gurusuite_orders?id=neq.__never__", { method: "DELETE" });
+    if (orders.length) {
+      await supabaseRequest("gurusuite_orders", {
+        method: "POST",
+        body: JSON.stringify(orders.map((order) => {
+          const normalized = normalizeOrder(order);
+          return { id: normalized.id, data: normalized, created_at: normalized.createdAt };
+        }))
+      });
+    }
+    return;
+  }
   await ensureDataStore();
   orderWriteQueue = orderWriteQueue.then(() => fsp.writeFile(ordersFile, JSON.stringify(orders, null, 2), "utf8"));
   await orderWriteQueue;
+}
+
+function supabaseEnabled() {
+  return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
+async function supabaseRequest(endpoint, options = {}) {
+  const base = process.env.SUPABASE_URL.replace(/\/$/, "");
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const response = await fetch(`${base}/rest/v1/${endpoint}`, {
+    ...options,
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+      ...(options.headers || {})
+    }
+  });
+  const text = await response.text();
+  let body = null;
+  try {
+    body = text ? JSON.parse(text) : null;
+  } catch {
+    body = text;
+  }
+  if (!response.ok) {
+    throw new Error(typeof body === "string" ? body : body?.message || "Supabase request failed");
+  }
+  return body;
+}
+
+function normalizeOrder(order) {
+  return {
+    id: String(order.id || `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`),
+    name: String(order.name || "Pengguna GuruSuite").slice(0, 120),
+    contact: String(order.contact || "").slice(0, 120),
+    plan: String(order.plan || "Pro Guru"),
+    basePrice: Number(order.basePrice || 0),
+    amount: Number(order.amount || 0),
+    bank: String(order.bank || paymentConfig.bank),
+    accountNumber: String(order.accountNumber || paymentConfig.accountNumber),
+    accountName: String(order.accountName || paymentConfig.accountName),
+    adminEmail: String(order.adminEmail || paymentConfig.adminEmail),
+    status: order.status === "paid" ? "paid" : "pending",
+    activationCode: String(order.activationCode || ""),
+    licenseToken: String(order.licenseToken || ""),
+    createdAt: String(order.createdAt || new Date().toISOString()),
+    paidAt: String(order.paidAt || ""),
+    activatedAt: String(order.activatedAt || "")
+  };
 }
 
 function sendJson(res, status, body) {
@@ -152,7 +220,7 @@ function findPlan(planName) {
 
 async function handleApi(req, res, url) {
   if (req.method === "GET" && url.pathname === "/api/health") {
-    sendJson(res, 200, { ok: true, app: "GuruSuite", publicBaseUrl });
+    sendJson(res, 200, { ok: true, app: "GuruSuite", publicBaseUrl, storage: supabaseEnabled() ? "supabase" : "file" });
     return;
   }
 
