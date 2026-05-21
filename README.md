@@ -54,7 +54,7 @@ Bagian pembayaran saat ini memakai mode transfer manual yang bisa diotomasi dari
 
 Email admin default: `dhaniekusnadi73@guru.sd.belajar.id`.
 
-Panduan deploy ada di `DEPLOYMENT.md`. Untuk publik, wajib set `ADMIN_PIN` ke PIN yang kuat.
+Panduan deploy Render/VPS ada di `DEPLOYMENT.md`. Panduan deploy Vercel + Supabase ada di `VERCEL-DEPLOYMENT.md`. Untuk publik, wajib set `ADMIN_PIN` ke PIN yang kuat.
 
 Sebelum share link ke pengguna, ikuti `PRODUCTION-CHECKLIST.md`.
 
