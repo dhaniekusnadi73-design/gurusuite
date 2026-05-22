@@ -630,6 +630,22 @@ legend {
   color: #0f5a3e;
 }
 
+.storage-ok,
+.storage-warning {
+  margin: 4px 0;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.storage-ok {
+  color: #0f5a3e;
+}
+
+.storage-warning {
+  color: #8a5500;
+}
+
 .history-item strong {
   display: block;
   font-size: 13px;

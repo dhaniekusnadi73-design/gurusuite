@@ -55,6 +55,13 @@ function findPlan(planName) {
   return plans.find((plan) => plan.name.toLowerCase() === String(planName || "").toLowerCase());
 }
 
+function getPublicBaseUrl(req) {
+  if (process.env.PUBLIC_BASE_URL) return process.env.PUBLIC_BASE_URL;
+  const proto = req.headers["x-forwarded-proto"] || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "";
+  return host ? `${proto}://${host}` : "";
+}
+
 function normalizeOrder(order) {
   return {
     id: String(order.id || `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`),
@@ -180,7 +187,7 @@ module.exports = async function handler(req, res) {
     const pathname = `/api/${Array.isArray(req.query.path) ? req.query.path.join("/") : req.query.path || ""}`;
 
     if (req.method === "GET" && pathname === "/api/health") {
-      sendJson(res, 200, { ok: true, app: "GuruSuite", publicBaseUrl, storage: supabaseEnabled() ? "supabase" : "file" });
+      sendJson(res, 200, { ok: true, app: "GuruSuite", publicBaseUrl: getPublicBaseUrl(req), storage: supabaseEnabled() ? "supabase" : "file" });
       return;
     }
 

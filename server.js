@@ -218,9 +218,16 @@ function findPlan(planName) {
   return plans.find((plan) => plan.name.toLowerCase() === String(planName || "").toLowerCase());
 }
 
+function getPublicBaseUrl(req) {
+  if (process.env.PUBLIC_BASE_URL) return process.env.PUBLIC_BASE_URL;
+  const proto = req.headers["x-forwarded-proto"] || (req.socket.encrypted ? "https" : "http");
+  const hostHeader = req.headers["x-forwarded-host"] || req.headers.host || `localhost:${port}`;
+  return `${proto}://${hostHeader}`;
+}
+
 async function handleApi(req, res, url) {
   if (req.method === "GET" && url.pathname === "/api/health") {
-    sendJson(res, 200, { ok: true, app: "GuruSuite", publicBaseUrl, storage: supabaseEnabled() ? "supabase" : "file" });
+    sendJson(res, 200, { ok: true, app: "GuruSuite", publicBaseUrl: getPublicBaseUrl(req), storage: supabaseEnabled() ? "supabase" : "file" });
     return;
   }
 

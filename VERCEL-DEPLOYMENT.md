@@ -68,3 +68,5 @@ Klik Deploy. Setelah selesai, cek:
 ```
 
 Kalau `storage` masih `file`, berarti env Supabase belum masuk.
+
+Jangan menerima order sungguhan sebelum `storage` menjadi `supabase`.

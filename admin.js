@@ -5,10 +5,29 @@ const el = {
   restoreOrdersInput: document.querySelector("#restoreOrdersInput"),
   adminOrders: document.querySelector("#adminOrders"),
   adminStatus: document.querySelector("#adminStatus"),
+  storageStatus: document.querySelector("#storageStatus"),
   adminSummary: document.querySelector("#adminSummary")
 };
 
 let ordersCache = [];
+
+async function loadHealth() {
+  try {
+    const response = await fetch("/api/health");
+    const data = await response.json();
+    const storage = data.storage || "unknown";
+    if (storage === "supabase") {
+      el.storageStatus.textContent = "Storage permanen aktif: Supabase.";
+      el.storageStatus.className = "storage-ok";
+    } else {
+      el.storageStatus.textContent = "Peringatan: storage masih sementara. Aktifkan Supabase sebelum menerima order sungguhan.";
+      el.storageStatus.className = "storage-warning";
+    }
+  } catch {
+    el.storageStatus.textContent = "Tidak bisa memeriksa status storage.";
+    el.storageStatus.className = "storage-warning";
+  }
+}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({
@@ -175,3 +194,4 @@ async function restoreOrders(event) {
 el.refreshOrdersBtn.addEventListener("click", refreshOrders);
 el.exportOrdersBtn.addEventListener("click", exportOrders);
 el.restoreOrdersInput.addEventListener("change", restoreOrders);
+loadHealth();
