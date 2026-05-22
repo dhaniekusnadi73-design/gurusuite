@@ -70,3 +70,5 @@ Klik Deploy. Setelah selesai, cek:
 Kalau `storage` masih `file`, berarti env Supabase belum masuk.
 
 Jangan menerima order sungguhan sebelum `storage` menjadi `supabase`.
+
+Pada Vercel, tombol invoice akan otomatis dikunci jika Supabase belum aktif. Ini mencegah pembeli melakukan transfer sebelum database permanen siap.

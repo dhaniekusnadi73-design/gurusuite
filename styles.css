@@ -51,6 +51,11 @@ button:hover {
   background: var(--green-dark);
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
 button.ghost {
   background: #eef5f1;
   color: var(--green-dark);

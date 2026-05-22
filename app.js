@@ -113,6 +113,7 @@ let account = JSON.parse(localStorage.getItem("gurusuite-account") || "null") ||
   currentOrder: null,
   licenseToken: ""
 };
+let paymentReady = true;
 let appConfig = {
   payment: {
     bank: "BSI",
@@ -164,10 +165,24 @@ async function loadConfig() {
     el.bankAccount.textContent = `${payment.bank} ${payment.accountNumber} a.n. ${payment.accountName}`;
     el.qrisAccount.textContent = payment.qrisLabel;
     el.adminContact.textContent = payment.adminEmail;
+    paymentReady = appConfig.paymentEnabled !== false;
+    updatePaymentAvailability();
   } catch {
     el.bankAccount.textContent = "BSI 7567057270 a.n. Dhanie Kusnadi";
     el.qrisAccount.textContent = "Siapkan QRIS merchant kamu di sini";
     el.adminContact.textContent = "dhaniekusnadi73@guru.sd.belajar.id";
+    paymentReady = true;
+    updatePaymentAvailability();
+  }
+}
+
+function updatePaymentAvailability() {
+  document.querySelectorAll("[data-plan]").forEach((button) => {
+    button.disabled = !paymentReady;
+    button.title = paymentReady ? "" : "Pembayaran belum aktif. Admin perlu mengaktifkan Supabase.";
+  });
+  if (!paymentReady) {
+    el.paymentInstruction.textContent = "Pembayaran belum aktif. Admin sedang menyiapkan database permanen agar order aman tersimpan.";
   }
 }
 
@@ -662,6 +677,10 @@ async function validateLicense() {
 }
 
 async function choosePlan(plan, price) {
+  if (!paymentReady) {
+    alert("Pembayaran belum aktif. Admin perlu mengaktifkan Supabase agar order tersimpan permanen.");
+    return;
+  }
   account.selectedPlan = plan;
   account.selectedPrice = Number(price);
   saveAccount();

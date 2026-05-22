@@ -87,6 +87,14 @@ function supabaseEnabled() {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 
+function temporaryOrdersAllowed() {
+  return process.env.ALLOW_TEMPORARY_ORDERS === "true" || !process.env.VERCEL;
+}
+
+function paymentEnabled() {
+  return supabaseEnabled() || temporaryOrdersAllowed();
+}
+
 async function supabaseRequest(endpoint, options = {}) {
   const base = process.env.SUPABASE_URL.replace(/\/$/, "");
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -192,11 +200,20 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "GET" && pathname === "/api/config") {
-      sendJson(res, 200, { payment: paymentConfig, plans });
+      sendJson(res, 200, {
+        payment: paymentConfig,
+        plans,
+        storage: supabaseEnabled() ? "supabase" : "file",
+        paymentEnabled: paymentEnabled()
+      });
       return;
     }
 
     if (req.method === "POST" && pathname === "/api/create-order") {
+      if (!paymentEnabled()) {
+        sendJson(res, 503, { error: "Pembayaran belum aktif. Admin perlu mengaktifkan Supabase agar order tersimpan permanen." });
+        return;
+      }
       const body = await getBody(req);
       const selectedPlan = findPlan(body.plan || "Pro Guru");
       if (!selectedPlan) {
