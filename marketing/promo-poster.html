@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Poster GuruSuite</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #f8efb7;
+        display: grid;
+        place-items: center;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #223020;
+        padding: 24px;
+      }
+
+      .poster {
+        width: min(100%, 720px);
+        aspect-ratio: 4 / 5;
+        background: linear-gradient(145deg, #fff8cf 0%, #ffe88d 58%, #d9efc7 100%);
+        border: 1px solid rgba(31, 61, 37, 0.12);
+        border-radius: 8px;
+        padding: 54px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 24px 80px rgba(32, 46, 22, 0.22);
+      }
+
+      .poster::before {
+        content: "";
+        position: absolute;
+        inset: 32px;
+        border: 2px solid rgba(31, 122, 77, 0.18);
+        border-radius: 8px;
+      }
+
+      .content {
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        z-index: 1;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        width: fit-content;
+        background: #1f7a4d;
+        color: #ffffff;
+        border-radius: 999px;
+        padding: 12px 20px;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 28px 0 16px;
+        font-size: clamp(56px, 10vw, 86px);
+        line-height: 0.92;
+        letter-spacing: 0;
+      }
+
+      .lead {
+        max-width: 560px;
+        margin: 0;
+        font-size: clamp(26px, 4.2vw, 38px);
+        line-height: 1.18;
+        font-weight: 700;
+        color: #33472e;
+      }
+
+      .list {
+        display: grid;
+        gap: 14px;
+        margin: 38px 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .list li {
+        background: rgba(255, 253, 242, 0.78);
+        border: 1px solid rgba(36, 48, 34, 0.1);
+        border-radius: 8px;
+        padding: 16px 18px;
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .footer {
+        display: grid;
+        gap: 12px;
+      }
+
+      .url {
+        color: #1f7a4d;
+        font-size: clamp(28px, 5vw, 44px);
+        font-weight: 900;
+      }
+
+      .note {
+        color: #5d6b56;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      @media print {
+        body {
+          padding: 0;
+        }
+
+        .poster {
+          box-shadow: none;
+          border-radius: 0;
+          width: 100vw;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="poster">
+      <section class="content">
+        <div>
+          <span class="eyebrow">Untuk guru SD, SMP, SMA</span>
+          <h1>GuruSuite</h1>
+          <p class="lead">Bantu susun perangkat ajar lebih cepat, rapi, dan praktis.</p>
+          <ul class="list">
+            <li>Modul ajar</li>
+            <li>Silabus dan ATP</li>
+            <li>Program semester</li>
+            <li>Perangkat pembelajaran</li>
+          </ul>
+        </div>
+        <div class="footer">
+          <div class="url">gurusuite.vercel.app</div>
+          <div class="note">Coba sekarang dan sesuaikan hasilnya dengan kebutuhan kelas.</div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

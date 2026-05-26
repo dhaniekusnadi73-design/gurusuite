@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Video Promo GuruSuite</title>
+    <style>
+      :root {
+        --ink: #243022;
+        --muted: #64705f;
+        --green: #1f7a4d;
+        --gold: #f5c84b;
+        --cream: #fff5c7;
+        --paper: #fffdf2;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #f8efb7;
+        color: var(--ink);
+        font-family: Arial, Helvetica, sans-serif;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      main {
+        width: min(100%, 980px);
+        display: grid;
+        grid-template-columns: minmax(280px, 360px) 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+
+      .panel {
+        background: rgba(255, 253, 242, 0.92);
+        border: 1px solid rgba(36, 48, 34, 0.12);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 18px 50px rgba(44, 56, 30, 0.14);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+
+      p {
+        margin: 0 0 16px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      button,
+      a.button {
+        border: 0;
+        border-radius: 8px;
+        background: var(--green);
+        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0 16px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        width: 100%;
+      }
+
+      button.secondary {
+        margin-top: 10px;
+        background: #314135;
+      }
+
+      .status {
+        min-height: 22px;
+        margin-top: 14px;
+        font-size: 14px;
+        color: #4c5a47;
+      }
+
+      canvas {
+        width: 100%;
+        max-width: 360px;
+        aspect-ratio: 9 / 16;
+        display: block;
+        margin-inline: auto;
+        border-radius: 8px;
+        box-shadow: 0 24px 60px rgba(30, 39, 27, 0.26);
+        background: var(--cream);
+      }
+
+      @media (max-width: 760px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <h1>Video Promo GuruSuite</h1>
+        <p>Format vertikal 9:16 untuk status WhatsApp, Reels, dan TikTok. Klik rekam untuk membuat file video WebM.</p>
+        <button id="recordBtn" type="button">Rekam video 20 detik</button>
+        <button class="secondary" id="restartBtn" type="button">Putar ulang preview</button>
+        <a class="button secondary" id="downloadLink" hidden>Unduh video</a>
+        <div class="status" id="status">Preview sedang berjalan.</div>
+      </section>
+
+      <canvas id="promoCanvas" width="720" height="1280" aria-label="Preview video promo GuruSuite"></canvas>
+    </main>
+
+    <script>
+      const canvas = document.querySelector("#promoCanvas");
+      const ctx = canvas.getContext("2d");
+      const recordBtn = document.querySelector("#recordBtn");
+      const restartBtn = document.querySelector("#restartBtn");
+      const downloadLink = document.querySelector("#downloadLink");
+      const statusEl = document.querySelector("#status");
+
+      const width = canvas.width;
+      const height = canvas.height;
+      const durationMs = 20000;
+      let startedAt = performance.now();
+
+      const scenes = [
+        {
+          start: 0,
+          end: 3500,
+          eyebrow: "Untuk guru SD, SMP, dan SMA",
+          title: "GuruSuite",
+          body: "Generator perangkat ajar yang membantu pekerjaan administrasi guru jadi lebih cepat.",
+          badge: "Perangkat ajar siap disusun"
+        },
+        {
+          start: 3500,
+          end: 7600,
+          eyebrow: "Cukup pilih kebutuhan",
+          title: "Jenjang, kelas, semester, kurikulum",
+          body: "Buat modul ajar, silabus, ATP, program semester, dan perangkat pembelajaran lain dalam satu tempat.",
+          badge: "Kurikulum Indonesia"
+        },
+        {
+          start: 7600,
+          end: 11800,
+          eyebrow: "Hemat waktu",
+          title: "Dari ide mengajar ke dokumen rapi",
+          body: "Cocok untuk guru yang ingin menyusun bahan ajar lebih terarah tanpa mulai dari halaman kosong.",
+          badge: "Mudah dipakai"
+        },
+        {
+          start: 11800,
+          end: 16000,
+          eyebrow: "Bayar sekali, aktifkan kode",
+          title: "Akses premium tersedia",
+          body: "Pembayaran manual aman, konfirmasi via email, lalu gunakan kode aktivasi untuk membuka fitur lengkap.",
+          badge: "BSI a.n. Dhanie Kusnadi"
+        },
+        {
+          start: 16000,
+          end: 20000,
+          eyebrow: "Coba sekarang",
+          title: "gurusuite.vercel.app",
+          body: "Bantu guru menyusun perangkat ajar dengan lebih tenang, praktis, dan konsisten.",
+          badge: "GuruSuite"
+        }
+      ];
+
+      function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+      }
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      function wrapText(text, x, y, maxWidth, lineHeight) {
+        const words = text.split(" ");
+        let line = "";
+        const lines = [];
+
+        for (const word of words) {
+          const test = line ? `${line} ${word}` : word;
+          if (ctx.measureText(test).width > maxWidth && line) {
+            lines.push(line);
+            line = word;
+          } else {
+            line = test;
+          }
+        }
+
+        if (line) lines.push(line);
+        lines.forEach((part, index) => ctx.fillText(part, x, y + index * lineHeight));
+        return lines.length * lineHeight;
+      }
+
+      function roundRect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+      }
+
+      function drawBackground(progress) {
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, "#fff7cc");
+        gradient.addColorStop(0.58, "#ffe894");
+        gradient.addColorStop(1, "#d9edc5");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.save();
+        ctx.globalAlpha = 0.16;
+        ctx.strokeStyle = "#315c36";
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 12; i += 1) {
+          const y = 100 + i * 96 + Math.sin(progress * Math.PI * 2 + i) * 10;
+          ctx.beginPath();
+          ctx.moveTo(56, y);
+          ctx.bezierCurveTo(180, y - 34, 350, y + 34, 664, y - 12);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      function drawDevice(progress) {
+        const float = Math.sin(progress * Math.PI * 2) * 9;
+        const x = 88;
+        const y = 640 + float;
+        const w = 544;
+        const h = 420;
+
+        ctx.save();
+        ctx.shadowColor = "rgba(40, 48, 30, 0.18)";
+        ctx.shadowBlur = 42;
+        ctx.shadowOffsetY = 22;
+        ctx.fillStyle = "rgba(255, 253, 242, 0.94)";
+        roundRect(x, y, w, h, 22);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.fillStyle = "#213b2c";
+        ctx.font = "700 30px Arial";
+        ctx.fillText("Parameter Ajar", x + 34, y + 58);
+
+        const fields = [
+          ["Jenjang", "SMP"],
+          ["Kelas", "VIII"],
+          ["Kurikulum", "Merdeka"],
+          ["Semester", "Ganjil"],
+          ["Paket", "Lengkap"]
+        ];
+
+        fields.forEach((field, index) => {
+          const fy = y + 92 + index * 58;
+          ctx.fillStyle = "#eef3df";
+          roundRect(x + 34, fy, w - 68, 42, 10);
+          ctx.fill();
+          ctx.fillStyle = "#617058";
+          ctx.font = "500 18px Arial";
+          ctx.fillText(field[0], x + 52, fy + 27);
+          ctx.fillStyle = "#1f7a4d";
+          ctx.font = "700 19px Arial";
+          ctx.textAlign = "right";
+          ctx.fillText(field[1], x + w - 52, fy + 27);
+          ctx.textAlign = "left";
+        });
+
+        ctx.fillStyle = "#1f7a4d";
+        roundRect(x + 34, y + 350, w - 68, 46, 10);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "700 20px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("Generate Perangkat Ajar", x + w / 2, y + 380);
+        ctx.textAlign = "left";
+      }
+
+      function drawFrame(now) {
+        const elapsed = (now - startedAt) % durationMs;
+        const totalProgress = elapsed / durationMs;
+        const scene = scenes.find((item) => elapsed >= item.start && elapsed < item.end) || scenes[0];
+        const sceneProgress = clamp((elapsed - scene.start) / (scene.end - scene.start), 0, 1);
+        const intro = easeOutCubic(clamp(sceneProgress / 0.24, 0, 1));
+        const outro = 1 - easeOutCubic(clamp((sceneProgress - 0.82) / 0.18, 0, 1));
+        const alpha = clamp(Math.min(intro, outro), 0, 1);
+        const offset = (1 - intro) * 34;
+
+        drawBackground(totalProgress);
+
+        ctx.save();
+        ctx.globalAlpha = 0.92;
+        ctx.fillStyle = "#fffdf2";
+        roundRect(48, 58, 624, 136, 24);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.fillStyle = "#1f7a4d";
+        ctx.font = "900 38px Arial";
+        ctx.fillText("GuruSuite", 82, 112);
+        ctx.fillStyle = "#51624e";
+        ctx.font = "500 21px Arial";
+        ctx.fillText("Generator perangkat ajar guru", 82, 150);
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.translate(0, offset);
+
+        ctx.fillStyle = "#1f7a4d";
+        roundRect(72, 248, 330, 42, 21);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "700 18px Arial";
+        ctx.fillText(scene.eyebrow, 94, 275);
+
+        ctx.fillStyle = "#1f2d20";
+        ctx.font = "900 56px Arial";
+        wrapText(scene.title, 72, 370, 586, 64);
+
+        ctx.fillStyle = "#4d5f49";
+        ctx.font = "500 28px Arial";
+        wrapText(scene.body, 74, 528, 572, 42);
+
+        ctx.fillStyle = "#f5c84b";
+        roundRect(72, 1120, 576, 70, 20);
+        ctx.fill();
+        ctx.fillStyle = "#26301e";
+        ctx.font = "800 24px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(scene.badge, width / 2, 1164);
+        ctx.textAlign = "left";
+        ctx.restore();
+
+        drawDevice(totalProgress);
+
+        ctx.fillStyle = "rgba(36, 48, 34, 0.28)";
+        roundRect(72, 1220, 576, 8, 4);
+        ctx.fill();
+        ctx.fillStyle = "#1f7a4d";
+        roundRect(72, 1220, 576 * totalProgress, 8, 4);
+        ctx.fill();
+
+        requestAnimationFrame(drawFrame);
+      }
+
+      function restart() {
+        startedAt = performance.now();
+      }
+
+      async function recordVideo() {
+        downloadLink.hidden = true;
+        const stream = canvas.captureStream(30);
+        const recorder = new MediaRecorder(stream, {
+          mimeType: "video/webm;codecs=vp9",
+          videoBitsPerSecond: 6000000
+        });
+        const chunks = [];
+
+        recorder.addEventListener("dataavailable", (event) => {
+          if (event.data.size) chunks.push(event.data);
+        });
+
+        recorder.addEventListener("stop", () => {
+          const blob = new Blob(chunks, { type: "video/webm" });
+          const url = URL.createObjectURL(blob);
+          downloadLink.href = url;
+          downloadLink.download = "gurusuite-promo-video.webm";
+          downloadLink.hidden = false;
+          statusEl.textContent = "Video selesai. Klik Unduh video.";
+          window.__lastRecording = blob;
+        });
+
+        restart();
+        recorder.start();
+        recordBtn.disabled = true;
+        statusEl.textContent = "Sedang merekam video 20 detik...";
+
+        await new Promise((resolve) => setTimeout(resolve, durationMs + 200));
+        recorder.stop();
+        recordBtn.disabled = false;
+      }
+
+      recordBtn.addEventListener("click", recordVideo);
+      restartBtn.addEventListener("click", restart);
+      requestAnimationFrame(drawFrame);
+
+      window.recordGuruSuitePromo = recordVideo;
+    </script>
+  </body>
+</html>
