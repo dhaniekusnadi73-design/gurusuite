@@ -95,6 +95,18 @@ function paymentEnabled() {
   return supabaseEnabled() || temporaryOrdersAllowed();
 }
 
+async function storageStatus() {
+  if (!supabaseEnabled()) {
+    return { storage: "file", storageOk: temporaryOrdersAllowed(), storageError: "" };
+  }
+  try {
+    await supabaseRequest("gurusuite_orders?select=id&limit=1");
+    return { storage: "supabase", storageOk: true, storageError: "" };
+  } catch (error) {
+    return { storage: "supabase-error", storageOk: false, storageError: error.message || "Supabase tidak bisa dijangkau" };
+  }
+}
+
 async function supabaseRequest(endpoint, options = {}) {
   const base = process.env.SUPABASE_URL.replace(/\/$/, "");
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -195,16 +207,18 @@ module.exports = async function handler(req, res) {
     const pathname = `/api/${Array.isArray(req.query.path) ? req.query.path.join("/") : req.query.path || ""}`;
 
     if (req.method === "GET" && pathname === "/api/health") {
-      sendJson(res, 200, { ok: true, app: "GuruSuite", publicBaseUrl: getPublicBaseUrl(req), storage: supabaseEnabled() ? "supabase" : "file" });
+      const status = await storageStatus();
+      sendJson(res, 200, { ok: status.storageOk, app: "GuruSuite", publicBaseUrl: getPublicBaseUrl(req), ...status });
       return;
     }
 
     if (req.method === "GET" && pathname === "/api/config") {
+      const status = await storageStatus();
       sendJson(res, 200, {
         payment: paymentConfig,
         plans,
-        storage: supabaseEnabled() ? "supabase" : "file",
-        paymentEnabled: paymentEnabled()
+        ...status,
+        paymentEnabled: status.storageOk && paymentEnabled()
       });
       return;
     }

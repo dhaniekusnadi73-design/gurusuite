@@ -62,7 +62,7 @@ async function refreshOrders() {
   const response = await fetch(`/api/orders?adminPin=${encodeURIComponent(adminPin)}`);
   const data = await response.json();
   if (!response.ok) {
-    el.adminStatus.textContent = "Ditolak";
+    el.adminStatus.textContent = response.status === 401 ? "Ditolak" : "Error server";
     el.adminOrders.innerHTML = `<p>${escapeHtml(data.error || "Gagal memuat order.")}</p>`;
     return;
   }
